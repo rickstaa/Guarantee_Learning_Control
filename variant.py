@@ -4,7 +4,11 @@ import numpy as np
 SEED = None
 ITA = 1.
 VARIANT = {
-    'env_name': 'Pointcircle-v0',
+    # "env_name": "PandaSlide-v0",
+    # "env_name": "PandaPickAndPlace-v0",
+    "env_name": "PandaReach-v0",
+    # "env_name": "PandaPush-v0",
+    # 'env_name': 'Pointcircle-v0',
     # 'env_name': 'CartPolecons-v0',
     # 'env_name': 'HalfCheetahcons-v0',
     'algorithm_name': 'LSAC',
@@ -82,19 +86,47 @@ ENV_PARAMS = {
         'max_global_steps': int(1e6),
         'max_episodes': int(1e6),
         'eval_render': False,},
-
+    # 'Carcost-v0': {
+    #     'max_ep_steps': 50,
+    #     'max_global_steps': int(5e5),
+    #     'max_episodes': int(1e6),
+    #     'eval_render': False, },
     'FetchReach-v1': {
         'max_ep_steps': 50,
         'max_global_steps': int(3e5),
         'max_episodes': int(1e6),
         'eval_render': False, },
 
-    # 'Carcost-v0': {
-    #     'max_ep_steps': 50,
-    #     'max_global_steps': int(5e5),
-    #     'max_episodes': int(1e6),
-    #     'eval_render': False, },
-     }
+    # Panda environment parameters
+    "PandaSlide-v0": {
+        "max_ep_steps": 200,
+        "max_global_steps": int(3e5),
+        "max_episodes": int(1e6),
+        "eval_render": False,
+        "reward_type": "sparse", # Sparse or dense
+    },
+    "PandaPickAndPlace-v0": {
+        "max_ep_steps": 200,
+        "max_global_steps": int(3e5),
+        "max_episodes": int(1e6),
+        "eval_render": False,
+        "reward_type": "sparse",  # Sparse or dense
+    },
+    "PandaReach-v0": {
+        "max_ep_steps": 200,
+        "max_global_steps": int(3e5),
+        "max_episodes": int(1e6),
+        "eval_render": False,
+        "reward_type": "sparse",  # Sparse or dense
+    },
+    "PandaPush-v0": {
+        "max_ep_steps": 200,
+        "max_global_steps": int(3e5),
+        "max_episodes": int(1e6),
+        "eval_render": False,
+        "reward_type": "sparse",  # Sparse or dense
+    },
+}
 ALG_PARAMS = {
 
     'LSAC': {
@@ -409,6 +441,23 @@ def get_env_from_name(name):
                 env.modify_action_scale = False
         if 'Fetch' in name or 'Hand' in name:
             env.unwrapped.reward_type = 'dense'
+
+        # Set Panda environment parameters
+        if "Panda" in name:
+
+            # Wrap panda_environment
+            # NOTE: As the the panda_openai_sim environments are GoalGym environments
+            # where we only accept normal gym environments need to wrap the goal-based
+            # environment using FlattenDictWrapper. This will convert the observations
+            # dictionary from a dict to a flat list.
+            env = gym.wrappers.FlattenObservation(env)
+
+            # Set reward type
+            if 'reward_type' in VARIANT['env_params'].keys():
+                if VARIANT['env_params']['reward_type'].lower() in ['sparse', 'dense']:
+                    env.unwrapped.reward_type = VARIANT["env_params"][
+                        "reward_type"
+                    ].lower()
     return env
 
 
@@ -455,4 +504,3 @@ def get_train(name):
         from LSAC.SRDDPG_V8 import train
 
     return train
-

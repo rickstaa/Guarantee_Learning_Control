@@ -386,4 +386,3 @@ if __name__ == '__main__':
             from safety_eval import instant_impulse as safety_eval_func
             safety_eval_func(VARIANT)
         tf.reset_default_graph()
-

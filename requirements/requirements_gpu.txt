@@ -1,0 +1,13 @@
+numpy==1.16.3
+tensorflow-gpu==1.13.1
+tensorflow-probability==0.6.0
+opencv-python
+gym
+gym[atari]
+cffi
+mujoco-py==1.50.1.68
+matplotlib
+
+# Panda_openai_ros requirements
+rospkg
+netifaces
